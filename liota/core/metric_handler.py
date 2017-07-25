@@ -141,6 +141,7 @@ class EventCheckerThread(Thread):
     def __init__(self, name=None):
         Thread.__init__(self, name=name)
         self.flag_alive = True
+        self.met_counter = 0
         self.start()
 
     def run(self):
@@ -157,6 +158,7 @@ class EventCheckerThread(Thread):
             if not metric.flag_alive:
                 log.debug("Discarded dead metric: %s" % str(metric))
                 continue
+            self.met_counter += 1
             collect_queue.put(metric)
         log.info("Thread exits: %s" % str(self.name))
 
@@ -166,6 +168,7 @@ class SendThread(Thread):
     def __init__(self, name=None):
         Thread.__init__(self, name=name)
         self.flag_alive = True
+        self.met_counter = 0
         self.start()
 
     def run(self):
@@ -181,6 +184,7 @@ class SendThread(Thread):
             if not metric.flag_alive:
                 log.debug("Discarded dead metric: %s" % str(metric))
                 continue
+            self.met_counter += 1
             metric.send_data()
         log.info("Thread exits: %s" % str(self.name))
 
